@@ -1,4 +1,4 @@
-package com.shopjava.shopjava_forestage_backend.factory;
+package com.shopjava.shopjava_forestage_backend.unit.factory;
 
 import com.github.javafaker.Faker;
 import com.shopjava.shopjava_forestage_backend.model.Product;

@@ -1,6 +1,7 @@
-package com.shopjava.shopjava_forestage_backend.service;
+package com.shopjava.shopjava_forestage_backend.unit.service;
 
-import com.shopjava.shopjava_forestage_backend.factory.ProductFactory;
+import com.shopjava.shopjava_forestage_backend.service.ProductService;
+import com.shopjava.shopjava_forestage_backend.unit.factory.ProductFactory;
 import com.shopjava.shopjava_forestage_backend.model.Product;
 import com.shopjava.shopjava_forestage_backend.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
