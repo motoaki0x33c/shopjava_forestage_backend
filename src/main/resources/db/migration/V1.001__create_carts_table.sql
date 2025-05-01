@@ -1,0 +1,6 @@
+CREATE TABLE carts (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    token VARCHAR(191) NOT NULL UNIQUE KEY,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
