@@ -1,5 +1,6 @@
 package com.shopjava.shopjava_forestage_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -49,4 +49,12 @@ public class Product {
 
     @LastModifiedDate
     private Date updatedAt;
+
+    @JsonProperty("firstPhoto")
+    public String getFirstPhotoWithUrl() {
+        if (firstPhoto != null && !firstPhoto.isEmpty())
+            return "/img/product/" + firstPhoto;
+        else
+            return "/img/no-image.jpg";
+    }
 }
