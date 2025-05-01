@@ -25,6 +25,10 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+    public Optional<Product> getByRoute(String route) {
+        return productRepository.findByRoute(route);
+    }
+
     public List<Product> getAll() {
         return productRepository.findAll();
     }

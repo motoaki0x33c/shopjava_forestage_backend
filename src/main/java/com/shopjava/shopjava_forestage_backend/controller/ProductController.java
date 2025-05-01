@@ -19,8 +19,8 @@ public class ProductController {
         return productService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public Product getProduct(@PathVariable Long id) {
-        return productService.getById(id).orElse(null);
+    @GetMapping("/{route}")
+    public Product getProduct(@PathVariable String route) {
+        return productService.getByRoute(route).orElse(null);
     }
 }

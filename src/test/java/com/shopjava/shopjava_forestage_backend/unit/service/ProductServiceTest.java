@@ -45,28 +45,28 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testGetById_ExistingProduct() {
+    void testGetByRoute_ExistingProduct() {
         Product product = ProductFactory.createDefault();
 
-        Mockito.when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+        Mockito.when(productRepository.findByRoute(product.getRoute())).thenReturn(Optional.of(product));
 
-        Optional<Product> foundProduct = productService.getById(product.getId());
+        Optional<Product> foundProduct = productService.getByRoute(product.getRoute());
 
         Assertions.assertTrue(foundProduct.isPresent());
         Assertions.assertEquals(product.getName(), foundProduct.get().getName());
 
-        System.out.println("testGetById_ExistingProduct: OK");
+        System.out.println("testGetByRoute_ExistingProduct: OK");
     }
 
     @Test
-    void testGetById_NonExistingProduct() {
-        Mockito.when(productRepository.findById(99L)).thenReturn(Optional.empty());
+    void testGetByRoute_NonExistingProduct() {
+        Mockito.when(productRepository.findByRoute("NonExisting")).thenReturn(Optional.empty());
 
-        Optional<Product> foundProduct = productService.getById(99L);
+        Optional<Product> foundProduct = productService.getByRoute("NonExisting");
 
         Assertions.assertFalse(foundProduct.isPresent());
 
-        System.out.println("testGetById_NonExistingProduct: OK");
+        System.out.println("testGetByRoute_NonExistingProduct: OK");
     }
 
     @Test
