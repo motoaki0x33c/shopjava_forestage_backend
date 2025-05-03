@@ -3,7 +3,9 @@ package com.shopjava.shopjava_forestage_backend.controller;
 import com.shopjava.shopjava_forestage_backend.model.Product;
 import com.shopjava.shopjava_forestage_backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class ProductController {
 
     @GetMapping("/{route}")
     public Product getProduct(@PathVariable String route) {
-        return productService.getByRoute(route).orElse(null);
+        return productService.getByRoute(route)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到商品"));
     }
 }
