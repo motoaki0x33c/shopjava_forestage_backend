@@ -1,5 +1,7 @@
 package com.shopjava.shopjava_forestage_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -32,8 +34,10 @@ public class CartProduct {
     private Date updatedAt;
 
     @ManyToOne
+    @JsonIgnoreProperties({"sku", "quantity", "description", "createdAt", "updatedAt"})
     private Product product;
 
     @ManyToOne
+    @JsonIgnore
     private Cart cart;
 }

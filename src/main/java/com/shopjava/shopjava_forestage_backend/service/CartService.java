@@ -20,7 +20,7 @@ public class CartService {
         if (token == null || token.isEmpty())
             return createCart();
         else
-            return cartRepository.findByToken(token).orElse(createCart());
+            return cartRepository.findByToken(token).orElseGet(this::createCart);
     }
 
     public void deleteCart(Long id) {
