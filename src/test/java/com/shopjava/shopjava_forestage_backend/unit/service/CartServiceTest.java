@@ -1,16 +1,22 @@
 package com.shopjava.shopjava_forestage_backend.unit.service;
 
 import com.shopjava.shopjava_forestage_backend.model.Cart;
+import com.shopjava.shopjava_forestage_backend.model.CartProduct;
+import com.shopjava.shopjava_forestage_backend.model.Product;
 import com.shopjava.shopjava_forestage_backend.repository.CartProductRepository;
 import com.shopjava.shopjava_forestage_backend.repository.CartRepository;
 import com.shopjava.shopjava_forestage_backend.service.CartService;
 import com.shopjava.shopjava_forestage_backend.unit.factory.CartFactory;
+import com.shopjava.shopjava_forestage_backend.unit.factory.ProductFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -37,5 +43,36 @@ public class CartServiceTest {
         Assertions.assertNotNull(cart.getToken());
 
         System.out.println("testGetCartIfTokenNotExist: OK");
+    }
+
+    @Test
+    public void testAddAndUpdateProductToCart() {
+        Cart fakeCart = CartFactory.createCartDefault();
+        Product fakeProduct = ProductFactory.createDefault();
+
+        Mockito.when(cartProductRepository.findByCartAndProduct(fakeCart, fakeProduct)).thenReturn(Optional.empty());
+
+        cartService.addProductToCart(fakeCart, fakeProduct, 3);
+
+        // 捕獲 cartProductRepository.save() 時的 CartProduct.class 內容
+        ArgumentCaptor<CartProduct> cartProductCaptor = ArgumentCaptor.forClass(CartProduct.class);
+        Mockito.verify(cartProductRepository).save(cartProductCaptor.capture());
+        CartProduct capturedCartProduct = cartProductCaptor.getValue();
+
+        Assertions.assertEquals(3, capturedCartProduct.getQuantity());
+
+        System.out.println("testAddProductToCart: OK");
+
+
+
+        Mockito.when(cartProductRepository.findByCartAndProduct(fakeCart, fakeProduct)).thenReturn(Optional.of(capturedCartProduct));
+
+        cartService.updateCartProduct(fakeCart, fakeProduct, 5);
+
+        capturedCartProduct = cartProductCaptor.getValue();
+
+        Assertions.assertEquals(5, capturedCartProduct.getQuantity());
+
+        System.out.println("testUpdateProductToCart: OK");
     }
 }
