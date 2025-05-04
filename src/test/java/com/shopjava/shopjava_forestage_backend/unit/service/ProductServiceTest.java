@@ -6,6 +6,7 @@ import com.shopjava.shopjava_forestage_backend.model.Product;
 import com.shopjava.shopjava_forestage_backend.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,16 +31,19 @@ public class ProductServiceTest {
     void testCreate() {
         Product product = ProductFactory.createDefault();
 
-        Mockito.when(productRepository.save(any(Product.class))).thenReturn(product);
-
         Product savedProduct = productService.create(product);
 
-        Assertions.assertNotNull(savedProduct);
-        Assertions.assertEquals(product.getName(), savedProduct.getName());
-        Assertions.assertEquals(product.getPrice(), savedProduct.getPrice());
-        Assertions.assertEquals(product.getSku(), savedProduct.getSku());
-        Assertions.assertEquals(product.getRoute(), savedProduct.getRoute());
-        Assertions.assertEquals(product.getQuantity(), savedProduct.getQuantity());
+        // 捕獲 productRepository.save() 時的 Product.class 內容
+        ArgumentCaptor<Product> cartProductCaptor = ArgumentCaptor.forClass(Product.class);
+        Mockito.verify(productRepository).save(cartProductCaptor.capture());
+        Product capturedProduct = cartProductCaptor.getValue();
+
+        Assertions.assertNotNull(capturedProduct);
+        Assertions.assertEquals(product.getName(), capturedProduct.getName());
+        Assertions.assertEquals(product.getPrice(), capturedProduct.getPrice());
+        Assertions.assertEquals(product.getSku(), capturedProduct.getSku());
+        Assertions.assertEquals(product.getRoute(), capturedProduct.getRoute());
+        Assertions.assertEquals(product.getQuantity(), capturedProduct.getQuantity());
         
         System.out.println("testCreate: OK");
     }
@@ -101,12 +105,17 @@ public class ProductServiceTest {
 
         Product result_product = productService.update(product.getId(), updated_product);
 
+        // 捕獲 productRepository.save() 時的 Product.class 內容
+        ArgumentCaptor<Product> cartProductCaptor = ArgumentCaptor.forClass(Product.class);
+        Mockito.verify(productRepository).save(cartProductCaptor.capture());
+        Product capturedProduct = cartProductCaptor.getValue();
+
         Assertions.assertNotNull(result_product);
-        Assertions.assertEquals(updated_product.getName(), result_product.getName());
-        Assertions.assertEquals(updated_product.getPrice(), result_product.getPrice());
-        Assertions.assertEquals(updated_product.getSku(), result_product.getSku());
-        Assertions.assertEquals(updated_product.getQuantity(), result_product.getQuantity());
-        Assertions.assertEquals(updated_product.getStatus(), result_product.getStatus());
+        Assertions.assertEquals(updated_product.getName(), capturedProduct.getName());
+        Assertions.assertEquals(updated_product.getPrice(), capturedProduct.getPrice());
+        Assertions.assertEquals(updated_product.getSku(), capturedProduct.getSku());
+        Assertions.assertEquals(updated_product.getQuantity(), capturedProduct.getQuantity());
+        Assertions.assertEquals(updated_product.getStatus(), capturedProduct.getStatus());
 
         System.out.println("testUpdate_ExistingProduct: OK");
     }

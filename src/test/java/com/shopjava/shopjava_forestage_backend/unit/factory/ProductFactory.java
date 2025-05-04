@@ -17,7 +17,7 @@ public class ProductFactory {
         product.setDescription(faker.lorem().paragraph());
         product.setQuantity(faker.number().numberBetween(0, 1000));
         product.setStatus(true);
-        product.setFirstPhoto(faker.internet().image());
+        product.setFirstPhoto(faker.file().fileName() + ".jpg");
         return product;
     }
 }
