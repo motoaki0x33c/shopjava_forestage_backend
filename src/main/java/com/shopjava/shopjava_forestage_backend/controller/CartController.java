@@ -41,7 +41,7 @@ public class CartController {
 
         cartService.addProductToCart(cart, product, request.getQuantity());
 
-        return cartService.getCart(request.getToken());
+        return cartService.getCart(cart.getToken());
     }
 
     @PutMapping("/updateProduct")
@@ -53,6 +53,6 @@ public class CartController {
 
         cartService.updateCartProduct(cart, product, request.getQuantity());
 
-        return cartService.getCart(request.getToken());
+        return cartService.getCart(cart.getToken());
     }
 }

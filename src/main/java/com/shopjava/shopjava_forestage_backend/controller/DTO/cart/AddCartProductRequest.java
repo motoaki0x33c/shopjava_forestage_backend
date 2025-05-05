@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class AddCartProductRequest {
-    @NotBlank(message = "token 不能為空")
     @Schema(description = "購物車 token", example = "abc-123-aaa")
     private String token;
 
