@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class AddCartProductRequest {
+public class UpdateCartProductRequest {
     @NotBlank(message = "token 不能為空")
     @Schema(description = "購物車 token", example = "abc-123-aaa")
     private String token;
@@ -15,7 +15,7 @@ public class AddCartProductRequest {
     private Long productId;
 
     @NotNull(message = "quantity 不能為空")
-    @Min(message = "數量必須大於 1", value = 1)
-    @Schema(description = "數量", example = "3")
+    @Min(message = "數量必須為 0 或正整數", value = 0)
+    @Schema(description = "數量，如帶 0 則刪除該商品於購物車", example = "8")
     private Integer quantity;
 }

@@ -2,6 +2,7 @@ package com.shopjava.shopjava_forestage_backend.controller;
 
 import com.shopjava.shopjava_forestage_backend.controller.DTO.cart.AddCartProductRequest;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.cart.GetCartRequest;
+import com.shopjava.shopjava_forestage_backend.controller.DTO.cart.UpdateCartProductRequest;
 import com.shopjava.shopjava_forestage_backend.model.Cart;
 import com.shopjava.shopjava_forestage_backend.model.Product;
 import com.shopjava.shopjava_forestage_backend.service.CartService;
@@ -32,7 +33,7 @@ public class CartController {
     }
 
     @PostMapping("/addProduct")
-    @Operation(summary = "更新購物車商品數量", description = "更新一項購物車內商品的數量")
+    @Operation(summary = "新增一商品", description = "新增一項商品於購物車內")
     public Cart addProductToCart(@Valid @RequestBody AddCartProductRequest request) {
         Cart cart = cartService.getCart(request.getToken());
         Product product = productService.getById(request.getProductId())
@@ -40,6 +41,18 @@ public class CartController {
 
         cartService.addProductToCart(cart, product, request.getQuantity());
 
-        return cart;
+        return cartService.getCart(request.getToken());
+    }
+
+    @PutMapping("/updateProduct")
+    @Operation(summary = "更新購物車一商品數量", description = "更新一項購物車內商品的數量，如數量為 0 則刪除該商品於購物車")
+    public Cart updateCartProduct(@Valid @RequestBody UpdateCartProductRequest request) {
+        Cart cart = cartService.getCart(request.getToken());
+        Product product = productService.getById(request.getProductId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到商品"));
+
+        cartService.updateCartProduct(cart, product, request.getQuantity());
+
+        return cartService.getCart(request.getToken());
     }
 }
