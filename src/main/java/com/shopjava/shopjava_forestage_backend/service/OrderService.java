@@ -1,5 +1,6 @@
 package com.shopjava.shopjava_forestage_backend.service;
 
+import com.shopjava.shopjava_forestage_backend.model.*;
 import com.shopjava.shopjava_forestage_backend.repository.LogisticsRepository;
 import com.shopjava.shopjava_forestage_backend.repository.PaymentRepository;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.PaymentAndLogisticsResponse;
@@ -51,5 +52,30 @@ public class OrderService {
         response.setLogistics(logistics);
         
         return response;
+    }
+
+    public Integer computeCartPrice(Cart cart, Payment payment, Logistics logistics) {
+        if (cart.getCartProducts().isEmpty()) throw new RuntimeException("購物車內無任何有效商品");
+
+        cart.getCartProducts().stream()
+            .filter(cartProduct -> !cartProduct.getProduct().getStatus())
+            .findFirst()
+            .ifPresent(cartProduct -> {
+                throw new RuntimeException("購物車中含有下架商品：" + cartProduct.getProduct().getName());
+            });
+
+        if (!payment.getStatus()) throw new RuntimeException("此付款方式已無法使用");
+        if (!logistics.getStatus()) throw new RuntimeException("此運送方式已無法使用");
+
+        Integer productPrice = cart.getCartProducts().stream()
+                .mapToInt(cartProduct -> cartProduct.getProduct().getPrice() * cartProduct.getQuantity())
+                .sum();
+        Integer shippingCost = logistics.getShippingCost();
+        Integer feeCost = payment.getFeeCost();
+
+        if (feeCost == null) feeCost = 0;
+        if (shippingCost == null) shippingCost = 0;
+
+        return productPrice + shippingCost + feeCost;
     }
 }
