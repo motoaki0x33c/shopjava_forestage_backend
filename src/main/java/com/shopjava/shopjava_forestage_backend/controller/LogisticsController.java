@@ -1,0 +1,69 @@
+package com.shopjava.shopjava_forestage_backend.controller;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopjava.shopjava_forestage_backend.model.Logistics;
+import com.shopjava.shopjava_forestage_backend.service.EcpayLogisticsService;
+import com.shopjava.shopjava_forestage_backend.service.LogisticsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.net.URI;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/log")
+@Tag(name = "Logisticd API", description = "物流操作相關 API")
+public class LogisticsController {
+    @Autowired
+    private EcpayLogisticsService ecpayLogisticsService;
+
+    @Autowired
+    private LogisticsService logisticsService;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @PostMapping("/ecpay/selectCvsMap/{logId}")
+    @Operation(summary = "取得綠界超商電子地圖", description = "取得綠界超商電子地圖並回傳 form 表單 html")
+    public String showEcpaySelectCvsMap(@PathVariable Long logId) {
+        Logistics logistics = logisticsService.getById(logId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到物流方式"));
+
+        ecpayLogisticsService.setLogistics(logistics);
+        return ecpayLogisticsService.getSelectCvsMapHtml();
+    }
+
+    @PostMapping("/ecpay/redirectCartPageWithCvsInfo")
+    @Operation(summary = "導向購物車頁面並帶上超商資訊", description = "網址參數中 cvsInfo 為 base64 編碼處理，解碼後格式為 JSON")
+    @ApiResponse(responseCode = "302", description = "http://localhost:5173/cart?cvsInfo=sdaf0893ujf2hud32f2")
+    public ResponseEntity<Void> redirectCartPageWithCvsInfo(@RequestBody Map<String, String> requestBody) {
+        Map<String, String> cvsInfo = new HashMap<>();
+        String cvsInfoString;
+
+        cvsInfo.put("cvsId", requestBody.get("CVSStoreID"));
+        cvsInfo.put("cvsName", requestBody.get("CVSStoreName"));
+        cvsInfo.put("cvsAddress", requestBody.get("CVSAddress"));
+
+        try {
+            cvsInfoString = objectMapper.writeValueAsString(cvsInfo);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.toString());
+        }
+
+        String base64Html = Base64.getEncoder().encodeToString(cvsInfoString.getBytes());
+        
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("http://localhost:5173/cart?cvsInfo=" + base64Html))
+                .build();
+    }
+}

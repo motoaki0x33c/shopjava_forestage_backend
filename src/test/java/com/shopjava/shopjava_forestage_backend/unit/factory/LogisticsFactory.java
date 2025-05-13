@@ -8,7 +8,7 @@ public class LogisticsFactory {
         logistics.setProvider("ecpay");
         logistics.setName("超商取貨 - 全家");
         logistics.setMethod("CVS");
-        logistics.setCvsCode("fami");
+        logistics.setCvsCode("FAMIC2C");
         logistics.setStatus(true);
         return logistics;
     }
