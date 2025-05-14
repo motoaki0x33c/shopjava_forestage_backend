@@ -5,7 +5,7 @@ CREATE TABLE payments (
     name VARCHAR(191),
     setting TEXT,
     status BOOLEAN DEFAULT TRUE NOT NULL,
-    fee_cost INT,
+    fee_cost INT NOT NULL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );

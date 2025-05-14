@@ -6,6 +6,6 @@ CREATE TABLE cart_products (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
 
-    FOREIGN KEY(cart_id) REFERENCES carts(id) ON DELETE CASCADE,
-    FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY(cart_id) REFERENCES carts(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE
 );

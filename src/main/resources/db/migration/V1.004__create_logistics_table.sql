@@ -6,7 +6,7 @@ CREATE TABLE logistics (
     name VARCHAR(191),
     setting TEXT,
     status BOOLEAN DEFAULT TRUE NOT NULL,
-    shipping_cost INT,
+    shipping_cost INT NOT NULL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
