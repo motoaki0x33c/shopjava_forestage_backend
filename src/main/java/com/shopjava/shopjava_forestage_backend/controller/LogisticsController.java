@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,10 +44,10 @@ public class LogisticsController {
         return ecpayLogisticsService.getSelectCvsMapHtml();
     }
 
-    @PostMapping("/ecpay/redirectCartPageWithCvsInfo")
+    @PostMapping(value = "/ecpay/redirectCartPageWithCvsInfo", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @Operation(summary = "導向購物車頁面並帶上超商資訊", description = "網址參數中 cvsInfo 為 base64 編碼處理，解碼後格式為 JSON")
     @ApiResponse(responseCode = "302", description = "http://localhost:5173/cart?cvsInfo=sdaf0893ujf2hud32f2")
-    public ResponseEntity<Void> redirectCartPageWithCvsInfo(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Void> redirectCartPageWithCvsInfo(@RequestParam Map<String, String> requestBody) {
         Map<String, String> cvsInfo = new HashMap<>();
         String cvsInfoString;
 

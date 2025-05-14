@@ -44,7 +44,7 @@ public class EcpayLogisticsService {
         params.put("LogisticsType", "CVS");
         params.put("LogisticsSubType", this.logistics.getCvsCode());
         params.put("IsCollection", "N");
-        params.put("ServerReplyURL", "http://localhost:8080/ecpay/redirectCartPageWithCvsInfo");
+        params.put("ServerReplyURL", "http://localhost:8080/log/ecpay/redirectCartPageWithCvsInfo");
 
         // 構建表單HTML，使用 StringBuilder 方便處理長字串
         StringBuilder html = new StringBuilder();
