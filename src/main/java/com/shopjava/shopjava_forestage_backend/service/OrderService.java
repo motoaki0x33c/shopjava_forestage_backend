@@ -7,7 +7,6 @@ import com.shopjava.shopjava_forestage_backend.model.*;
 import com.shopjava.shopjava_forestage_backend.repository.LogisticsRepository;
 import com.shopjava.shopjava_forestage_backend.repository.OrderRepository;
 import com.shopjava.shopjava_forestage_backend.repository.PaymentRepository;
-import com.shopjava.shopjava_forestage_backend.repository.ProductRepository;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.PaymentAndLogisticsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,13 +28,20 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
     private CartService cartService;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    public Order getOrderByNumber(String orderNumber) {
+        return orderRepository.findByOrderNumber(orderNumber)
+            .orElseThrow(() -> new RuntimeException("找不到訂單"));
+    }
+
+    public void changeOrderStatus(Order order, Integer orderStatus) {
+        order.setOrderStatus(orderStatus);
+        orderRepository.save(order);
+    }
 
     public PaymentAndLogisticsResponse getUsablePaymentAndLogistics() {
         PaymentAndLogisticsResponse response = new PaymentAndLogisticsResponse();
