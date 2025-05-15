@@ -9,7 +9,9 @@ import com.shopjava.shopjava_forestage_backend.repository.OrderRepository;
 import com.shopjava.shopjava_forestage_backend.repository.PaymentRepository;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.PaymentAndLogisticsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -125,6 +127,9 @@ public class OrderService {
         order.setLogistics(logistics);
         
         if (logistics.getMethod().equals("CVS")) {
+            if (orderData.getCvsInfo() == null) {
+                throw new RuntimeException("請選擇超商");
+            }
             try {
                 order.setCvsInfo(objectMapper.writeValueAsString(orderData.getCvsInfo()));
             } catch (JsonProcessingException e) {

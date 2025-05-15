@@ -52,11 +52,12 @@ public class CartServiceTest {
 
         Mockito.when(cartProductRepository.findByCartAndProduct(fakeCart, fakeProduct)).thenReturn(Optional.empty());
 
+        // 捕獲 cartProductRepository.save() 的內容
+        ArgumentCaptor<CartProduct> cartProductCaptor = ArgumentCaptor.forClass(CartProduct.class);
+        Mockito.when(cartProductRepository.save(cartProductCaptor.capture())).thenAnswer(i -> i.getArgument(0));
+
         cartService.addProductToCart(fakeCart, fakeProduct, 3);
 
-        // 捕獲 cartProductRepository.save() 時的 CartProduct.class 內容
-        ArgumentCaptor<CartProduct> cartProductCaptor = ArgumentCaptor.forClass(CartProduct.class);
-        Mockito.verify(cartProductRepository).save(cartProductCaptor.capture());
         CartProduct capturedCartProduct = cartProductCaptor.getValue();
 
         Assertions.assertEquals(3, capturedCartProduct.getQuantity());

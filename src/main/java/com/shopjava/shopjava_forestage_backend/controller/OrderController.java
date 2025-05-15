@@ -62,12 +62,6 @@ public class OrderController {
         Logistics logistics = logisticsService.getById(requestBody.getLogisticsId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到運送方式"));
 
-        if (logistics.getMethod().equals("CVS")) {
-            if (requestBody.getCvsInfo() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "請選擇超商");
-            }
-        }
-
         Order order = orderService.create(requestBody, payment, logistics);
 
         return order.getOrderNumber();
