@@ -15,9 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -46,10 +44,8 @@ public class OrderController {
     @Operation(summary = "計算購物車內金物流選擇後的訂單總金額", description = "")
     public Integer computeCartPrice(@Valid @RequestBody ComputeCartPriceRequest requestBody) {
         Cart cart = cartService.getCart(requestBody.getToken());
-        Payment payment = paymentService.getById(requestBody.getPaymentId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到付款方式"));
-        Logistics logistics = logisticsService.getById(requestBody.getLogisticsId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到運送方式"));
+        Payment payment = paymentService.getById(requestBody.getPaymentId());
+        Logistics logistics = logisticsService.getById(requestBody.getLogisticsId());
 
         return orderService.computeCartPrice(cart, payment, logistics);
     }
@@ -57,13 +53,17 @@ public class OrderController {
     @PostMapping("/create")
     @Operation(summary = "建立訂單", description = "成功將會回傳訂單編號")
     public String create(@Valid @RequestBody CreateOrderRequest requestBody) {
-        Payment payment = paymentService.getById(requestBody.getPaymentId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到付款方式"));
-        Logistics logistics = logisticsService.getById(requestBody.getLogisticsId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到運送方式"));
+        Payment payment = paymentService.getById(requestBody.getPaymentId());
+        Logistics logistics = logisticsService.getById(requestBody.getLogisticsId());
 
         Order order = orderService.create(requestBody, payment, logistics);
 
         return order.getOrderNumber();
+    }
+
+    @GetMapping("/get/{orderNumber}")
+    @Operation(summary = "取得訂單", description = "取得訂單資料")
+    public Order getOrder(@PathVariable String orderNumber) {
+        return orderService.getOrderByNumber(orderNumber);
     }
 }

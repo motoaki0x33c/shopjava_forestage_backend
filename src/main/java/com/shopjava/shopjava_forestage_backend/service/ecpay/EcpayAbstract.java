@@ -53,8 +53,10 @@ abstract class EcpayAbstract<T> {
     }
 
     protected String generateCheckMacValue(Map<String, String> params) {
-        // 1. 將參數依照第一個英文字母，由A到Z的順序來排序
-        String[] keys = params.keySet().toArray(new String[0]);     // 使用 new String[0] 方式，如果 Set 為空，則用空陣列，否則自動建立一個大小剛好的陣列。
+        // 1. 將參數依照第一個英文字母，由A到Z的順序來排序，需排除 CheckMacValue
+        String[] keys = params.keySet().stream()
+            .filter(key -> !key.equals("CheckMacValue"))
+            .toArray(String[]::new);
         Arrays.sort(keys);
 
         // 2. 組合參數字串

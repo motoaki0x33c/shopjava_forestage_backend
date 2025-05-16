@@ -28,7 +28,6 @@ public class ProductController {
     @GetMapping("/{route}")
     @Operation(summary = "取得指定商品", description = "根據 route 取得商品資料")
     public Product getProduct(@PathVariable String route) {
-        return productService.getByRoute(route)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到商品"));
+        return productService.getByRoute(route);
     }
 }

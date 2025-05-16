@@ -37,12 +37,11 @@ public class OrderService {
 
     public Order getOrderByNumber(String orderNumber) {
         return orderRepository.findByOrderNumber(orderNumber)
-            .orElseThrow(() -> new RuntimeException("找不到訂單"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到訂單"));
     }
 
-    public void changeOrderStatus(Order order, Integer orderStatus) {
-        order.setOrderStatus(orderStatus);
-        orderRepository.save(order);
+    public Order updateOrder(Order order) {
+        return orderRepository.save(order);
     }
 
     public PaymentAndLogisticsResponse getUsablePaymentAndLogistics() {
@@ -80,19 +79,22 @@ public class OrderService {
     }
 
     public Integer computeCartPrice(Cart cart, Payment payment, Logistics logistics) {
-        if (cart.getCartProducts().isEmpty()) throw new RuntimeException("購物車內無任何有效商品");
+        List<CartProduct> cartProducts = cart.getCartProducts();
+        if (cartProducts == null || cartProducts.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "購物車內無任何有效商品");
+        }
 
-        cart.getCartProducts().stream()
+        cartProducts.stream()
             .filter(cartProduct -> !cartProduct.getProduct().getStatus())
             .findFirst()
             .ifPresent(cartProduct -> {
-                throw new RuntimeException("購物車中含有下架商品：" + cartProduct.getProduct().getName());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "購物車中含有下架商品：" + cartProduct.getProduct().getName());
             });
 
-        if (!payment.getStatus()) throw new RuntimeException("此付款方式已無法使用");
-        if (!logistics.getStatus()) throw new RuntimeException("此運送方式已無法使用");
+        if (!payment.getStatus()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "此付款方式已無法使用");
+        if (!logistics.getStatus()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "此運送方式已無法使用");
 
-        Integer productPrice = cart.getCartProducts().stream()
+        Integer productPrice = cartProducts.stream()
                 .mapToInt(cartProduct -> cartProduct.getProduct().getPrice() * cartProduct.getQuantity())
                 .sum();
         Integer shippingCost = logistics.getShippingCost();
@@ -128,7 +130,7 @@ public class OrderService {
         
         if (logistics.getMethod().equals("CVS")) {
             if (orderData.getCvsInfo() == null) {
-                throw new RuntimeException("請選擇超商");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "請選擇超商");
             }
             try {
                 order.setCvsInfo(objectMapper.writeValueAsString(orderData.getCvsInfo()));
@@ -142,6 +144,7 @@ public class OrderService {
             OrderProduct orderProduct = new OrderProduct();
             orderProduct.setOrder(order);
             orderProduct.setProduct(cartProduct.getProduct());
+            orderProduct.setPrice(cartProduct.getProduct().getPrice());
             orderProduct.setQuantity(cartProduct.getQuantity());
             orderProducts.add(orderProduct);
         }

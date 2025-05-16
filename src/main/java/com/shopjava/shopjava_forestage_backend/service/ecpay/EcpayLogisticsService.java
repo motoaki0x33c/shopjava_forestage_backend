@@ -15,7 +15,7 @@ public class EcpayLogisticsService extends EcpayAbstract<Logistics> {
     private String backendUrl;
 
     public void setContractSetting(Logistics logistics) {
-        if (logistics.getProvider() != "ecpay" || logistics.getSetting().isEmpty()) {
+        if (!logistics.getProvider().equals("ecpay") || logistics.getSetting() == null) {
             throw new RuntimeException("物流提供商或設定不正確");
         }
         this.logistics = logistics;

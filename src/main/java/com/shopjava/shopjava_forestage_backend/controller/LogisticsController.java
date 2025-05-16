@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.Base64;
@@ -41,8 +40,7 @@ public class LogisticsController {
     @GetMapping("/ecpay/selectCvsMap/{logId}")
     @Operation(summary = "取得綠界超商電子地圖", description = "取得綠界超商電子地圖並回傳 form 表單 html")
     public String showEcpaySelectCvsMap(@PathVariable Long logId) {
-        Logistics logistics = logisticsService.getById(logId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到物流方式"));
+        Logistics logistics = logisticsService.getById(logId);
 
         ecpayLogisticsService.setContractSetting(logistics);
         return ecpayLogisticsService.getSelectCvsMapHtml();
