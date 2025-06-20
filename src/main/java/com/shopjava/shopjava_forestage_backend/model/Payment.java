@@ -38,6 +38,7 @@ public class Payment {
     @NotNull
     private Boolean status;
 
+    @NotNull
     @PositiveOrZero
     private Integer feeCost;
 

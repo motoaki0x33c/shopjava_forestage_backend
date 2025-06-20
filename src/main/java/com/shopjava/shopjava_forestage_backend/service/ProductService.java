@@ -3,10 +3,11 @@ package com.shopjava.shopjava_forestage_backend.service;
 import com.shopjava.shopjava_forestage_backend.model.Product;
 import com.shopjava.shopjava_forestage_backend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -21,12 +22,14 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Optional<Product> getById(Long id) {
-        return productRepository.findById(id);
+    public Product getById(Long id) {
+        return productRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到商品"));
     }
 
-    public Optional<Product> getByRoute(String route) {
-        return productRepository.findByRoute(route);
+    public Product getByRoute(String route) {
+        return productRepository.findByRoute(route)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到商品"));
     }
 
     public List<Product> getAll() {

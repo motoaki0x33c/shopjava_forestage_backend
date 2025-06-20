@@ -1,9 +1,12 @@
 package com.shopjava.shopjava_forestage_backend.controller;
 
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.ComputeCartPriceRequest;
+import com.shopjava.shopjava_forestage_backend.controller.DTO.order.CreateOrderRequest;
+import com.shopjava.shopjava_forestage_backend.controller.DTO.order.GetOrderResponse;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.PaymentAndLogisticsResponse;
 import com.shopjava.shopjava_forestage_backend.model.Cart;
 import com.shopjava.shopjava_forestage_backend.model.Logistics;
+import com.shopjava.shopjava_forestage_backend.model.Order;
 import com.shopjava.shopjava_forestage_backend.model.Payment;
 import com.shopjava.shopjava_forestage_backend.service.CartService;
 import com.shopjava.shopjava_forestage_backend.service.LogisticsService;
@@ -13,9 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -42,13 +43,28 @@ public class OrderController {
 
     @PostMapping("/check/computeCartPrice")
     @Operation(summary = "計算購物車內金物流選擇後的訂單總金額", description = "")
-    public Integer computeCartPrice(@Valid @RequestBody ComputeCartPriceRequest request) {
-        Cart cart = cartService.getCart(request.getToken());
-        Payment payment = paymentService.getById(request.getPaymentId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到付款方式"));
-        Logistics logistics = logisticsService.getById(request.getLogisticsId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到運送方式"));
+    public Integer computeCartPrice(@Valid @RequestBody ComputeCartPriceRequest requestBody) {
+        Cart cart = cartService.getCart(requestBody.getToken());
+        Payment payment = paymentService.getById(requestBody.getPaymentId());
+        Logistics logistics = logisticsService.getById(requestBody.getLogisticsId());
 
         return orderService.computeCartPrice(cart, payment, logistics);
+    }
+
+    @PostMapping("/create")
+    @Operation(summary = "建立訂單", description = "成功將會回傳訂單編號")
+    public String create(@Valid @RequestBody CreateOrderRequest requestBody) {
+        Payment payment = paymentService.getById(requestBody.getPaymentId());
+        Logistics logistics = logisticsService.getById(requestBody.getLogisticsId());
+
+        Order order = orderService.create(requestBody, payment, logistics);
+
+        return order.getOrderNumber();
+    }
+
+    @GetMapping("/get/{orderNumber}")
+    @Operation(summary = "取得訂單", description = "取得訂單資料")
+    public GetOrderResponse getOrderDetail(@PathVariable String orderNumber) {
+        return orderService.getOrderDetail(orderNumber);
     }
 }
