@@ -2,6 +2,7 @@ package com.shopjava.shopjava_forestage_backend.controller;
 
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.ComputeCartPriceRequest;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.CreateOrderRequest;
+import com.shopjava.shopjava_forestage_backend.controller.DTO.order.GetOrderResponse;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.PaymentAndLogisticsResponse;
 import com.shopjava.shopjava_forestage_backend.model.Cart;
 import com.shopjava.shopjava_forestage_backend.model.Logistics;
@@ -63,7 +64,7 @@ public class OrderController {
 
     @GetMapping("/get/{orderNumber}")
     @Operation(summary = "取得訂單", description = "取得訂單資料")
-    public Order getOrder(@PathVariable String orderNumber) {
-        return orderService.getOrderByNumber(orderNumber);
+    public GetOrderResponse getOrderDetail(@PathVariable String orderNumber) {
+        return orderService.getOrderDetail(orderNumber);
     }
 }

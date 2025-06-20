@@ -3,6 +3,7 @@ package com.shopjava.shopjava_forestage_backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopjava.shopjava_forestage_backend.controller.DTO.order.CreateOrderRequest;
+import com.shopjava.shopjava_forestage_backend.controller.DTO.order.GetOrderResponse;
 import com.shopjava.shopjava_forestage_backend.model.*;
 import com.shopjava.shopjava_forestage_backend.repository.LogisticsRepository;
 import com.shopjava.shopjava_forestage_backend.repository.OrderRepository;
@@ -46,7 +47,7 @@ public class OrderService {
 
     public PaymentAndLogisticsResponse getUsablePaymentAndLogistics() {
         PaymentAndLogisticsResponse response = new PaymentAndLogisticsResponse();
-        
+
         List<Map<String, Object>> payments = paymentRepository.getUsable().stream()
             .map(payment -> {
                 Map<String, Object> paymentMap = new HashMap<>();
@@ -58,7 +59,7 @@ public class OrderService {
                 return paymentMap;
             })
             .collect(Collectors.toList());
-            
+
         List<Map<String, Object>> logistics = logisticsRepository.getUsable().stream()
             .map(logistic -> {
                 Map<String, Object> logisticMap = new HashMap<>();
@@ -71,10 +72,10 @@ public class OrderService {
                 return logisticMap;
             })
             .collect(Collectors.toList());
-            
+
         response.setPayments(payments);
         response.setLogistics(logistics);
-        
+
         return response;
     }
 
@@ -137,6 +138,7 @@ public class OrderService {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e.toString());
             }
+            order.setLogisticsCvsCode(logistics.getCvsCode());
         }
 
         List<OrderProduct> orderProducts = new ArrayList<>();
@@ -153,6 +155,56 @@ public class OrderService {
         cartService.deleteCart(cart.getId());
 
         return orderRepository.save(order);
+    }
+
+    public GetOrderResponse getOrderDetail(String orderNumber) {
+        Order order = this.getOrderByNumber(orderNumber);
+
+        GetOrderResponse response = new GetOrderResponse();
+
+        Map<String, Object> cvsInfo = new HashMap<>();
+        if (order.getLogisticsMethod().equals("CVS")) {
+            try {
+                cvsInfo = objectMapper.readValue(order.getCvsInfo(), Map.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e.toString());
+            }
+        }
+
+        List<Map<String, Object>> products = new ArrayList<>();
+        for (OrderProduct orderProduct : order.getOrderProducts()) {
+            Map<String, Object> product = new HashMap<>();
+            product.put("price", orderProduct.getPrice());
+            product.put("quantity", orderProduct.getQuantity());
+            product.put("name", orderProduct.getProduct().getName());
+            product.put("firstPhoto", orderProduct.getProduct().getFirstPhotoWithUrl());
+            products.add(product);
+        }
+
+        response.setCreatedAt(order.getCreatedAt());
+        response.setCustomerEmail(order.getCustomerEmail());
+        response.setCustomerName(order.getCustomerName());
+        response.setCustomerPhone(order.getCustomerPhone());
+        response.setCustomerAddress(order.getCustomerAddress());
+        response.setCvsInfo(cvsInfo);
+        response.setLogisticsCvsCode(order.getLogisticsCvsCode());
+        response.setLogisticsMethod(order.getLogisticsMethod());
+        response.setLogisticsCvsCode(order.getLogisticsCvsCode());
+        response.setLogisticsProvider(order.getLogisticsProvider());
+        response.setLogisticsTrackingNumber(order.getLogisticsTrackingNumber());
+        response.setLogisticsStatus(order.getLogisticsStatus());
+        response.setOrderNumber(order.getOrderNumber());
+        response.setOrderStatus(order.getOrderStatus());
+        response.setPaymentMethod(order.getPaymentMethod());
+        response.setPaymentProvider(order.getPaymentProvider());
+        response.setPaymentStatus(order.getPaymentStatus());
+        response.setPaymentTime(order.getPaymentTime());
+        response.setFeeCost(order.getFeeCost());
+        response.setShippingCost(order.getShippingCost());
+        response.setTotalPrice(order.getTotalPrice());
+        response.setOrderProducts(products);
+
+        return response;
     }
 
     private String generateOrderNumber() {
