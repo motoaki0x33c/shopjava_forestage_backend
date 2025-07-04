@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      SPRING_APPLICATION_NAME: shopjava_forestage_backend
+      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/shopjava
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ''
+      APP_BACKENDURL: http://localhost:8080
+      APP_FRONTENDURL: http://localhost:5173
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  db_data: 
