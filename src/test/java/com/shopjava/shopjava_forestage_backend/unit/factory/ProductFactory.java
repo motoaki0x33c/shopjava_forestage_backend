@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class ProductFactory {
     public static Product createDefault() {
-        Faker faker = new Faker(Locale.of("zh-TW"));
+        Faker faker = new Faker(Locale.forLanguageTag("zh-TW"));
 
         Product product = new Product();
         product.setName(faker.commerce().productName());
