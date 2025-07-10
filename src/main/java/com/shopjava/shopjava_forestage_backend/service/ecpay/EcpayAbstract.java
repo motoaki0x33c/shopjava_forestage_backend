@@ -14,14 +14,14 @@ abstract class EcpayAbstract<T> {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String ECPAY_API_URL = "https://logistics-stage.ecpay.com.tw";
     private String merchantID;
     private String hashKey;
     private String hashIV;
 
     abstract void setContractSetting(T logisticsOrPayment);
 
-    protected String getEcpayApiUrl() { return this.ECPAY_API_URL; }
+    protected String getEcpayApiLogUrl() { return "https://logistics-stage.ecpay.com.tw"; }
+    protected String getEcpayApiPayUrl() { return "https://payment-stage.ecpay.com.tw"; }
     protected String getMerchantID() { return this.merchantID; }
     protected String getHashKey() { return this.hashKey; }
     protected String getHashIV() { return this.hashIV; }

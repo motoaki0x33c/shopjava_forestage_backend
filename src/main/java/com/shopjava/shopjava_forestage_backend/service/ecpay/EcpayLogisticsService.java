@@ -30,6 +30,6 @@ public class EcpayLogisticsService extends EcpayAbstract<Logistics> {
         params.put("IsCollection", "N");
         params.put("ServerReplyURL", this.backendUrl + "/log/ecpay/redirectCartPageWithCvsInfo");
 
-        return this.generateFormHtml(params, this.getEcpayApiUrl() + "/Express/map");
+        return this.generateFormHtml(params, this.getEcpayApiLogUrl() + "/Express/map");
     }
 }

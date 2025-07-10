@@ -64,7 +64,7 @@ public class EcpayPaymentService extends EcpayAbstract<Payment> {
         
         params.put("CheckMacValue", this.generateCheckMacValue(params));
 
-        return this.generateFormHtml(params, this.getEcpayApiUrl() + "/Cashier/AioCheckOut/V5");
+        return this.generateFormHtml(params, this.getEcpayApiPayUrl() + "/Cashier/AioCheckOut/V5");
     }
 
     public boolean handleReturnData(Map<String, String> requestBody, Order order) {
