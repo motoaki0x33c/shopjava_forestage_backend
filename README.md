@@ -16,22 +16,22 @@
 - [x] 購物車商品刪除
 
 ### 訂單系統
-- [ ] 訂單創建和管理
+- [x] 訂單創建和管理
+- [x] 訂單查詢
 - [ ] 訂單狀態追蹤
 - [ ] 訂單歷史記錄
 
 ### 金流整合
-- [ ] 綠界金流整合
+- [x] 綠界金流整合
 - [ ] 支援多種金流方式
 - [ ] 金流狀態管理
-- [ ] 手續費設定
+- [x] 手續費計算
 
 ### 物流整合
 - [x] 綠界物流整合
   - [x] 超商電子地圖功能
-  - [x] 超商資訊回傳處理
 - [ ] 其他物流商整合
-- [ ] 運費計算
+- [x] 運費計算
 - [ ] 物流狀態追蹤
 
 ## 資料庫結構
@@ -53,12 +53,18 @@
 5. `logistics` - 物流資料表
    - 管理物流方式和設定
 
+6. `orders` - 訂單資料表
+   - 紀錄訂單資訊
+
+7. `order_products` - 訂單商品資料表
+   - 記錄訂單中的商品資訊
+
 ## API 文件
 
 本專案使用 Swagger 3 (OpenAPI) 來生成 API 文件。啟動專案後，可以通過以下網址訪問 API 文件：
 
 ```
-http://localhost:8080/swagger-ui/index.html
+http://localhost/swagger-ui/index.html
 ```
 
 ## 安裝和運行
@@ -83,7 +89,7 @@ mvn spring-boot:run
 ```
 
 5. 訪問 API 文件
-- 開啟瀏覽器，訪問 `http://localhost:8080/swagger-ui/index.html`
+- 開啟瀏覽器，訪問 `http://localhost/swagger-ui/index.html`
 
 ## 技術架構
 - Spring Boot
@@ -91,7 +97,7 @@ mvn spring-boot:run
 - JPA/Hibernate
 - MySQL
 - Swagger/OpenAPI
--  
+
 ## 開發團隊
 
 - 開發者：motoaki
