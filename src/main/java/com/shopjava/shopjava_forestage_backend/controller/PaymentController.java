@@ -64,13 +64,15 @@ public class PaymentController {
     @Operation(summary = "成功完成綠界頁面操作", description = "於成功完成綠界頁面操作時綠界會呼叫此 API，並且轉回前端訂單成功頁面or失敗頁面")
     @ApiResponse(responseCode = "302", description = "http://domain-example.com/orderDetail/{orderNumber}")
     public ResponseEntity<Void> ecpaySuccessRedirect(@RequestParam Map<String, String> requestBody) {
+        log.info("收到 ecpay 回傳參數: {}", requestBody);
+
         try {
             boolean isSuccess = false;
     
-            String merchantTradeNo = requestBody.get("merchantTradeNo");
+            String merchantTradeNo = requestBody.get("MerchantTradeNo");
             if (merchantTradeNo == null) {
                 return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(frontendUrl + "/order/failed"))
+                    .location(URI.create(this.frontendUrl + "/order/failed"))
                     .build();
             }
 
@@ -78,7 +80,7 @@ public class PaymentController {
             Payment payment = order.getPayment();
             if (payment == null) {
                 return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(frontendUrl + "/order/failed"))
+                    .location(URI.create(this.frontendUrl + "/order/failed"))
                     .build();
             }
 
@@ -87,17 +89,17 @@ public class PaymentController {
 
             if (isSuccess) {
                 return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(frontendUrl + "/order/detail/" + order.getOrderNumber()))
+                    .location(URI.create(this.frontendUrl + "/order/detail/" + order.getOrderNumber()))
                     .build();
             } else {
                 return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(frontendUrl + "/order/failed"))
+                    .location(URI.create(this.frontendUrl + "/order/failed"))
                     .build();
             }
         } catch (Exception e) {
             log.error("綠界回傳資料處理失敗", e);
             return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(frontendUrl + "/order/failed"))
+                .location(URI.create(this.frontendUrl + "/order/failed"))
                 .build();
         }
     }

@@ -26,6 +26,9 @@ public class EcpayPaymentService extends EcpayAbstract<Payment> {
     @Value("${app.backendUrl}")
     private String backendUrl;
 
+    @Value("${app.frontendUrl}")
+    private String frontendUrl;
+
     @Autowired
     private OrderService orderService;
 
@@ -51,7 +54,7 @@ public class EcpayPaymentService extends EcpayAbstract<Payment> {
         params.put("PaymentType", "aio");
         params.put("ReturnURL", this.backendUrl + "/pay/ecpay/paidCallback");
         params.put("EncryptType", "1");
-        params.put("ClientBackURL", this.backendUrl + "/pay/ecpay/failedRedirect");
+        params.put("ClientBackURL", this.frontendUrl + "/order/failed");
         
         switch (this.payment.getMethod()) {
             case "CVS":
@@ -71,16 +74,12 @@ public class EcpayPaymentService extends EcpayAbstract<Payment> {
         if (requestBody.get("MerchantID") == null || !requestBody.get("MerchantID").equals(this.getMerchantID())) {
             return false;
         }
-
-        if (!requestBody.get("PaymentType").equals(order.getPaymentMethod())) {
-            return false;
-        }
         
         if (!requestBody.get("CheckMacValue").equals(this.generateCheckMacValue(requestBody))) {
             return false;
         }
 
-        if (requestBody.get("SimulatePaid").equals("1")) {
+        if (requestBody.get("SimulatePaid") != null && requestBody.get("SimulatePaid").equals("1")) {
             // 模擬付款
             // return false;
         }
